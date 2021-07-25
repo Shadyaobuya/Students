@@ -35,38 +35,43 @@ fun castViews() {
     Login = findViewById(R.id.btnlogin)
 }
     fun onClick(){
-        var email=etMail.text.toString()
-        var password=etPassw.text.toString()
-
-
-
         Login.setOnClickListener {
-            var loginRequest=LoginRequest(
-                email=email,password=password
-            )
-            val retrofit = ApiClient.buildApiClient(ApiInterface::class.java)
-            val request = retrofit.loginStudent(loginRequest)
-            request.enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(baseContext, "Login Successful", Toast.LENGTH_LONG).show()
-                        var intent= Intent(baseContext,CoursesPage::class.java)
-                        startActivity(intent)
-                    } else {
-                        try {
-                            val error = JSONObject(response.errorBody()!!.string())
-                            Toast.makeText(baseContext, error.toString(), Toast.LENGTH_LONG)
-                                .show()
-                        } catch (e: Exception) {
-                            Toast.makeText(baseContext, e.message, Toast.LENGTH_LONG).show()
+            var email=etMail.text.toString()
+            var password=etPassw.text.toString()
+            if (email.isEmpty() || password.isEmpty()){
+                etMail.setError("cant be blank")
+                etPassw.setError("cant be blank")
+            }
+            else{
+                var loginRequest=LoginRequest(
+                    email=email,password=password
+                )
+                val retrofit = ApiClient.buildApiClient(ApiInterface::class.java)
+                val request = retrofit.loginStudent(loginRequest)
+                request.enqueue(object : Callback<LoginResponse> {
+                    override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(baseContext, "Login Successful", Toast.LENGTH_LONG).show()
+                            var intent= Intent(baseContext,CoursesPage::class.java)
+                            startActivity(intent)
+                        } else {
+                            try {
+                                val error = JSONObject(response.errorBody()!!.string())
+                                Toast.makeText(baseContext, error.toString(), Toast.LENGTH_LONG)
+                                    .show()
+                            } catch (e: Exception) {
+                                Toast.makeText(baseContext, e.message, Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
-                }
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
+                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                        Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
+                    }
+                })
             }
-        })
-    }
+            }
+
+
 }
 }
 

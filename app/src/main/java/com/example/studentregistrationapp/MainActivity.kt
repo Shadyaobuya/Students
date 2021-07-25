@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
         }
         admin.setOnClickListener {
+
             var intent=Intent(baseContext,AdminPage::class.java)
             startActivity(intent)
         }

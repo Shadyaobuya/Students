@@ -59,42 +59,55 @@ class StudentRegistration : AppCompatActivity() {
             var password=etPassword.text.toString()
             var phone=etPhone.text.toString()
             var nationalitychoice=nationality.selectedItem.toString()
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty() || Dob.isEmpty() || nationalitychoice.isEmpty()){
+              etName.setError("Cant be blank")
+                courses.setError("Cant be blank")
+                Register.setError("Cant be blank")
+                etDob.setError("Cant be blank")
+                etPassword.setError("Cant be blank")
+                etEmail.setError("Cant be blank")
+                etPhone.setError("Cant be blank")
 
-            var registrationRequest=RegistrationRequest(
-                name=name,email=email,password = password, dateOfBirth = Dob,phoneNumber = phone,nationality = nationalitychoice
-            )
-            val retrofit = ApiClient.buildApiClient(ApiInterface::class.java)
-            val request = retrofit.registerStudent(registrationRequest)
-            request.enqueue(object :Callback<RegistrationResponse>{
-                override fun onResponse(call: Call<RegistrationResponse>, response: Response<RegistrationResponse>) {
-                    if (response.isSuccessful){
-                        Toast.makeText(baseContext, "Successful Registration", Toast.LENGTH_LONG).show()
+            }
+            else{
+                var registrationRequest=RegistrationRequest(
+                    name=name,email=email,password = password, dateOfBirth = Dob,phoneNumber = phone,nationality = nationalitychoice
+                )
+                val retrofit = ApiClient.buildApiClient(ApiInterface::class.java)
+                val request = retrofit.registerStudent(registrationRequest)
+                request.enqueue(object :Callback<RegistrationResponse>{
+                    override fun onResponse(call: Call<RegistrationResponse>, response: Response<RegistrationResponse>) {
+                        if (response.isSuccessful){
+                            Toast.makeText(baseContext, "Successful Registration", Toast.LENGTH_LONG).show()
 
-                    }
-                    else{
-                        try {
-                            val error = JSONObject(response.errorBody()!!.string())
-                            Toast.makeText(baseContext, error.toString(), Toast.LENGTH_LONG)
-                                .show()
-                        } catch (e: Exception) {
-                            Toast.makeText(baseContext, e.message, Toast.LENGTH_LONG).show()
                         }
+                        else{
+                            try {
+                                val error = JSONObject(response.errorBody()!!.string())
+                                Toast.makeText(baseContext, error.toString(), Toast.LENGTH_LONG)
+                                    .show()
+                            } catch (e: Exception) {
+                                Toast.makeText(baseContext, e.message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+
                     }
 
-                }
-
-                override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
-                    Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
+                    override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
+                        Toast.makeText(baseContext, t.message, Toast.LENGTH_LONG).show()
 
 
-                }
+                    }
 
-            })
+                })
 
+
+            }
 
         }
+            }
 
-    }
+
 }
 
 data class ApiError(var errors: List<String>)
